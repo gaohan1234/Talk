@@ -107,7 +107,7 @@ University of Notre Dame
 \textit{hgao1@nd.edu} % Your email address
 }
 \date{SIAM MDS 2020 Virtual Minisymposium:\newline Machine Learning for Physical Systems
-	\newline\today} % Date, can be changed to a custom date
+	\newline} % Date, can be changed to a custom date
 \AtBeginSection[]
 {
 	\begin{frame}
@@ -260,6 +260,13 @@ To obtain $\Gcal^{-1}$, solve:
 \label{eqn:GInv}
 \nabla^2\boldsymbol{\xi}(\mathbf{x}) = 0,
 \end{equation*}
+\begin{equation*}
+\begin{split}
+\label{eqn:GinvBC}
+\boldsymbol{\xi}(\mathbf{x})&=\boldsymbol{\xi}_{b}\;\ \mathrm{for}\;\forall\;\mathbf{x}\in\partial\Omega_p^i, i = 1, \cdots, 4\\
+\mathbf{x}(\boldsymbol{\xi})&=\mathbf{x}_{b}\;\ \mathrm{for}\;\forall\;\boldsymbol{\xi}\in\partial\Omega_r^i, i = 1, \cdots, 4 
+\end{split}
+\end{equation*}
 \normalsize
 To obtain $\Gcal$, solve:
 \tiny
@@ -281,8 +288,7 @@ To obtain $\Gcal$, solve:
 
 \column{.7\textwidth}
 \pause
-What do we gain from this mapping? Directly use backbone of CNN
-\pause
+What do we gain from this mapping? \pause Directly use backbone of CNN
 \tiny
 \begin{equation*}
 	\begin{split}
@@ -318,11 +324,13 @@ The optimization problem for irregular domain is
 
 \begin{frame}
 \frametitle{Result on regular domain}
+Super-resolve the low-fidelity model to high-fidelity model with noise removed.
+Better accuracy than standard Bicubic method.
 \begin{figure}
 	\includegraphics[height=0.4\textwidth]{covecdiffpdf.pdf}
 	\includegraphics[height=0.4\textwidth]{Heat.png}
+Convection diffusion equation     $\quad\quad\quad\quad\quad\quad$        Heat equation
 \end{figure}
-Convection diffusion equation (left) and heat equation (right).
 \end{frame}
 
 \begin{frame}{Result on irregular domain}
@@ -351,13 +359,18 @@ NS equation
 %------------------------------------------------
 
 \begin{frame}{Reference}
-Gao, Han, Luning Sun, and Jian-Xun Wang. "PhyGeoNet: Physics-Informed Geometry-Adaptive Convolutional Neural Networks for Solving Parametric PDEs on Irregular Domain." arXiv preprint arXiv:2004.13145 (2020).
+\begin{itemize}
+\item \textbf{Gao, Han, Luning Sun, and Jian-Xun Wang. "PhyGeoNet: Physics-Informed Geometry-Adaptive Convolutional Neural Networks for Solving Parametric PDEs on Irregular Domain." arXiv preprint arXiv:2004.13145 (2020).}
+\end{itemize}
 \end{frame}
 %------------------------------------------------
 
 \begin{frame}{Acknowledgment}
+\begin{figure}
+\includegraphics[width=1.\textwidth]{ND.jpg}
+\end{figure}
 \begin{itemize}
-	\item Thanks to my adviser, Jian-Xun Wang
+	\item Thanks to my adviser, Dr. Jian-Xun Wang.
 	\item Thanks to Dr. Lu Lu and Prof. George Em Karniadakis for giving me this opportunity to share my work with people in this area.
 	\item Thanks for all the speakers and audience, I learn a lot from everybody in this symposium.
 \end{itemize}

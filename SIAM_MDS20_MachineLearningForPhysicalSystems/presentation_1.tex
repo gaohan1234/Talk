@@ -1,0 +1,365 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beamer Presentation
+% LaTeX Template
+% Version 1.0 (10/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+
+\documentclass{beamer}
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+%\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{dateplot}
+\usepackage{lineno}
+\linenumbers
+\usepackage{tikzscale}
+\usetikzlibrary{arrows,automata}
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\input{./texlib/preamble.macros.tex}
+\input{./texlib/preamble.tikz.tex}
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[Apply CNN to solve fluid problem]{Rapid simulator for fluid dynamics based on physics-constrained convolutional neural networks} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Han Gao} % Your name
+\institute[Notre Dame] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{
+Aerospace and Mechanical Engineering
+\newline
+Center of Informatics and Computational Science
+\newline
+University of Notre Dame
+\\% Your institution for the title page
+\medskip
+\textit{hgao1@nd.edu} % Your email address
+}
+\date{SIAM MDS 2020 Virtual Minisymposium:\newline Machine Learning for Physical Systems
+	\newline\today} % Date, can be changed to a custom date
+\AtBeginSection[]
+{
+	\begin{frame}
+	\frametitle{Table of Contents}
+	\tableofcontents[currentsection]
+\end{frame}
+}
+\begin{document}
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+
+\begin{frame}
+\frametitle{Overview} % Table of contents slide, comment this block out to remove it
+\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+%------------------------------------------------
+\section{Introduction and Motivation} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
+%------------------------------------------------
+%\subsection{Subsection Example} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
+
+
+\begin{frame}{Neural Network can ease the machine burden!}
+\begin{itemize}
+	\item \textbf{Faster than fast}: Traditional surrogate models such as reduced order model (ROM), multi-fideity model (MF), can significantly reduce the computational cost from high-dimensional model to a much cheaper low-dimensional model \textbf{(Still at a "model" cost)}. But NN can achieve \textbf{the algebra evaluation cost}, which can theoretically be orders of magnitudes faster. 
+	\item \textbf{Circumvent curse of dimensionality (2020 Prof. Weinan E)}:
+\begin{equation*}
+\begin{split}
+f^{True}(\xbm)&=\int_{\Rbb^d}a(\omegabold)e^{i(\omegabold,\xbm)}d\omegabold=\int_{\Rbb^d}a(\omegabold)e^{i(\omegabold,\xbm)}\pi(d\omegabold)\\
+f^{Traditional}_m(\xbm)&=\frac{1}{m}\sum_j a(\omegabold_j)e^{i(\omegabold_j,\xbm)}\;f^{NN}=\frac{1}{m}\sum_{j=1}^{m} \underbrace{a(\omegabold_j)e^{i(\omegabold_j,\xbm)}}_{\mathrm{\small{2-layer-network}}}\\
+error^{Traditional}&=Km^{-\frac{\alpha}{d}}\quad\quad\quad\quad error^{NN}=K\frac{var(f^{True})}{m}
+\end{split}
+\end{equation*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Neural Network can ease the human burden!}
+\begin{itemize}
+\item \textbf{Enforce PDE constraint in a very straightforward way} (Prof. Karniadakis and Prof. Zabaras since 2018): Encode PDEs with auto-differentiation or convolution filters without traditional numerical concerns, such as stability of scheme and discontinuity.
+\item \textbf{Incorporate data in an unprecedented way for inverse problem} (Prof. Karniadakis and co-workers since 2018): Traditional methods for solving inverse problem can be classified into two categories, gradient-based and non-gradient based method. The former is super code-intrusive and the latter one requires carefully design the framework (e.g., prior in Bayesian methods).  
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Basic background of neural network}
+Many different types of network
+\begin{itemize}
+\item Fully-connected neural network (FCNN).
+\item \textbf{Convolutional neural network (CNN)}.
+\end{itemize}
+Two types of training:
+\begin{itemize}
+    \item Data-based training, usually requires a large number of labeled data pair.
+    \item \textbf{Equation-based training, only requires less data or without data}.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}
+\frametitle{Several Challenges In Equation-Based Training CNN}
+\begin{itemize}
+\item How to impose boundary condition of PDEs  on irregular domains for CNN (non-image like domain)? \only<2-3>{\textbf{Inspiring solution: wavelet-based mask method (e.g.,distanced function by Prof Hao Sun and Prof Duraisamy)}}  
+\item How to decide or attribute the coefficient of different loss terms (e.g., boundary loss ,equation loss)? \only<2-3>{\textbf{Inspiring solution: learning-rate annealing (Sifan Wang and Prof Perdikaris)}} 
+\end{itemize}
+\only<3>{\textbf{Inspired by these great work}, I want to make some contribution on \textbf{making CNN be able to `circumvent' these challenges instead of directly solving these challenges}.}
+\end{frame}
+
+\section{Methodology}
+%------------------------------------------------
+\begin{frame}{Train a CNN model on a regular domain}
+A parametric PDE:
+\begin{equation*}
+\label{eqn:generalSteadyPDE}
+\begin{split}
+&\mathcal{F}(\mathbf{u},\nabla\mathbf{u}, \nabla^2 \mathbf{u}, \cdots; \boldsymbol{\mu})=0,\;\;\text{in }\Omega_{p}, \quad \mubold \text{ is parameters} \\
+&\mathcal{B}(\mathbf{u},\nabla\mathbf{u}, \nabla^2 \mathbf{u}, \cdots; \boldsymbol{\mu})=0,\;\;\text{on }\partial\Omega_{p},
+\end{split}
+\end{equation*}
+Discrete solution field on can be approximated by a CNN
+\begin{equation*}
+\label{eqn:cnn-approx}
+\mathbf{u}\Big(\boldsymbol{\chi}, \boldsymbol{\mu}(\boldsymbol{\chi})\Big) \approx  \mathbf{u}^{cnn}\Big(\boldsymbol{\chi}, \boldsymbol{\mu}(\boldsymbol{\chi}); \Gamma\Big),
+\end{equation*}
+$\Gamma$ is trainable filter, $\chi$ is a mesh,
+\begin{equation*}
+g^l(\mathbf{x}) = \phi\Big((g^{l}\odot \gamma^{l})(\mathbf{x})\Big), \  \mathbf{x} \in \boldsymbol{\chi}^l,
+\end{equation*}
+\begin{equation*}
+\scriptscriptstyle{\label{eqn:pdetraining}
+	\begin{split}
+	&\min_{\Gamma} \sum_{i=1}^{n_d}
+	\underbrace{\left\|
+		\mathcal{F}\Big(\mathbf{u}^{cnn}(\boldsymbol{\chi}, \boldsymbol{\mu}_i; \Gamma),
+		\nabla\mathbf{u}^{cnn}(\boldsymbol{\chi}, \boldsymbol{\mu}_i; \Gamma), 
+		\nabla^2\mathbf{u}^{cnn}(\boldsymbol{\chi}, \boldsymbol{\mu}_i; \Gamma), \cdots; \boldsymbol{\mu}_i\Big) \right\|_{\Omega_{p}}}_{\text{equation-based loss:}\ \mathcal{L}_{pde}},\\
+	&s.t.\;\; \mathcal{B}\Big(\mathbf{u}^{cnn}(\boldsymbol{\chi}, \boldsymbol{\mu}_i; \Gamma),
+	\nabla\mathbf{u}^{cnn}(\boldsymbol{\chi}, \boldsymbol{\mu}_i; \Gamma), 
+	\nabla^2\mathbf{u}^{cnn}(\boldsymbol{\chi}, \boldsymbol{\mu}_i; \Gamma), \cdots;
+	\boldsymbol{\mu}_i\Big)=0,\text{on}\partial\Omega_{p}.
+	\end{split}
+}
+\end{equation*}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Visualize the CNN backbone}
+\begin{figure}
+\includegraphics[width=0.7\textwidth]{CNN.pdf}
+\vfill
+\includegraphics[height=0.2\textwidth]{laplaceU.pdf}
+\hfill
+\includegraphics[height=0.2\textwidth]{WhatIsCNN.pdf}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Deal with irregular domain}
+\begin{figure}
+\includegraphics[width=1\textwidth]{PhyGeoCNN}
+\end{figure}
+\begin{columns}[c]
+\column{.5\textwidth}
+\begin{equation*}
+\xbm=\Gcal(\xibold)\quad \Gcal:\Omega_{r}\mapsto\Omega_{p}
+\end{equation*}
+\column{.5\textwidth}
+\begin{equation*}
+\xibold=\Gcal(\xbm)\quad \Gcal^{-1}:\Omega_{p}\mapsto\Omega_{r}
+\end{equation*}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Solve non-linear elliptic PDE to obtain $\Gcal$ and $\Gcal^{-1}$}
+\begin{columns}[c]
+\column{.3\textwidth}
+To obtain $\Gcal^{-1}$, solve:
+\tiny
+\begin{equation*}
+\label{eqn:GInv}
+\nabla^2\boldsymbol{\xi}(\mathbf{x}) = 0,
+\end{equation*}
+\normalsize
+To obtain $\Gcal$, solve:
+\tiny
+\begin{equation*}
+	\begin{split}
+		\label{eqn:G}
+		\alpha\frac{\partial^2x}{\partial\xi^2}-2\beta\frac{\partial^2x}{\partial\xi\partial\beta}+\gamma\frac{\partial^2x}{\partial\eta^2}=0,\\
+		\alpha\frac{\partial^2y}{\partial\xi^2}-2\beta\frac{\partial^2y}{\partial\xi\partial\beta}+\gamma\frac{\partial^2y}{\partial\eta^2}=0,
+	\end{split}
+\end{equation*}
+\begin{equation*}
+\label{eqn:alphabetagamma}
+\begin{split}
+\alpha&=\left(\frac{\partial x}{\partial \eta}\right)^2+\left(\frac{\partial y}{\partial \eta}\right)^2,\\
+\gamma&=\left(\frac{\partial x}{\partial \xi}\right)^2+\left(\frac{\partial y}{\partial \xi}\right)^2,\\
+\beta&=\frac{\partial x}{\partial \xi}\frac{\partial x}{\partial \eta}+\frac{\partial y}{\partial \xi}\frac{\partial y}{\partial \eta}.
+\end{split}
+\end{equation*}
+
+\column{.7\textwidth}
+\pause
+What do we gain from this mapping? Directly use backbone of CNN
+\pause
+\tiny
+\begin{equation*}
+	\begin{split}
+		\label{eqn:Du}
+		\frac{\partial }{\partial x}&=\underbrace{\frac{1}{J}}_{\text{constant}}\Big[\left(\frac{\partial }{\partial \xi}\right) \underbrace{\left(\frac{\partial y}{\partial \eta}\right)}_{\text{constant}} - \left(\frac{\partial }{\partial \eta}\right) \underbrace{\left(\frac{\partial y}{\partial \xi}\right)}_{\text{constant}}\Big],\\
+		\frac{\partial }{\partial y}&=\underbrace{\frac{1}{J}}_{\text{constant}}\Big[\left(\frac{\partial }{\partial \eta}\right) \underbrace{\left(\frac{\partial x}{\partial\xi}\right)}_{\text{constant}} - \left(\frac{\partial }{\partial \xi}\right) \underbrace{\left(\frac{\partial x}{\partial \eta}\right)}_{\text{constant}}\Big],
+	\end{split}
+\end{equation*}
+\normalsize
+\pause
+The optimization problem for irregular domain is
+\tiny
+\begin{equation*}
+\label{eqn:optmizationNew}
+\begin{split}
+&\min_{\Gamma} \sum_{i=1}^{n_d}
+\underbrace{\left\|
+	\tilde{\mathcal{F}}\Big(\mathbf{u}^{cnn}(\boldsymbol{\Xi}, \boldsymbol{\mu}_i; \Gamma),
+	\nabla\mathbf{u}^{cnn}(\boldsymbol{\Xi}, \boldsymbol{\mu}_i; \Gamma), 
+	\nabla^2\mathbf{u}^{cnn}(\boldsymbol{\Xi}, \boldsymbol{\mu}_i; \Gamma), \cdots; \boldsymbol{\mu}_i\Big) \right\|_{\Omega_{r}}}_{\text{equation-based loss on reference domain:}\ \tilde{\mathcal{L}}_{pde}},\\
+&s.t.\;\; \tilde{\mathcal{B}}\Big(\mathbf{u}^{cnn}(\boldsymbol{\Xi}, \boldsymbol{\mu}_i; \Gamma),
+\nabla\mathbf{u}^{cnn}(\boldsymbol{\Xi}, \boldsymbol{\mu}_i; \Gamma), 
+\nabla^2\mathbf{u}^{cnn}(\boldsymbol{\Xi}, \boldsymbol{\mu}_i; \Gamma), \cdots;
+\boldsymbol{\mu}_i\Big)=0,\;\;\text{on }\partial\Omega_{r}.
+\end{split}
+\end{equation*} 
+\end{columns}
+\end{frame}
+
+
+%------------------------------------------------
+\section{Result}
+
+\begin{frame}
+\frametitle{Result on regular domain}
+\begin{figure}
+	\includegraphics[height=0.4\textwidth]{covecdiffpdf.pdf}
+	\includegraphics[height=0.4\textwidth]{Heat.png}
+\end{figure}
+Convection diffusion equation (left) and heat equation (right).
+\end{frame}
+
+\begin{frame}{Result on irregular domain}
+\begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
+\column{0.5\textwidth} % Right column and width
+\begin{figure}
+\includegraphics[width=1\textwidth]{DetHeat_1274T.pdf}
+\vfill
+\includegraphics[width=0.6\textwidth]{ParaHeat_Contour.pdf}
+\end{figure}
+\centering
+Heat equation
+
+\column{0.5\textwidth} % Right column and width
+\begin{figure}
+	\includegraphics[width=0.5\textwidth]{DetNS_15000VelMagAndPressure.pdf}
+	\vfill
+	\includegraphics[width=0.6\textwidth]{ParaNS_ResultContour.pdf}
+\end{figure}
+\centering
+NS equation
+\end{columns}
+\end{frame}
+%------------------------------------------------
+
+%------------------------------------------------
+
+\begin{frame}{Reference}
+Gao, Han, Luning Sun, and Jian-Xun Wang. "PhyGeoNet: Physics-Informed Geometry-Adaptive Convolutional Neural Networks for Solving Parametric PDEs on Irregular Domain." arXiv preprint arXiv:2004.13145 (2020).
+\end{frame}
+%------------------------------------------------
+
+\begin{frame}{Acknowledgment}
+\begin{itemize}
+	\item Thanks to my adviser, Jian-Xun Wang
+	\item Thanks to Dr. Lu Lu and Prof. George Em Karniadakis for giving me this opportunity to share my work with people in this area.
+	\item Thanks for all the speakers and audience, I learn a lot from everybody in this symposium.
+\end{itemize}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+
+\end{document} 

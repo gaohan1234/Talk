@@ -1,0 +1,46 @@
+% This file was created by tikzplotlib v0.9.1.
+\begin{tikzpicture}
+
+\definecolor{color0}{rgb}{0.12156862745098,0.466666666666667,0.705882352941177}
+\definecolor{color1}{rgb}{1,0.498039215686275,0.0549019607843137}
+
+\begin{axis}[
+legend cell align={left},
+legend style={fill opacity=0.8, draw opacity=1, text opacity=1, at={(0.03,0.97)}, anchor=north west, draw=white!80!black},
+tick align=outside,
+tick pos=left,
+x grid style={white!69.0196078431373!black},
+xlabel={Noise level},
+xmin=-0.05, xmax=1.05,
+xtick={0,0.2,0.4,0.6,0.8,1.0},
+xtick style={color=black},
+y grid style={white!69.0196078431373!black},
+ylabel={Error},
+ymin=0.0469340665092692, ymax=0.57956841280181,
+ytick style={color=black},
+ytick={0,0.1,0.2,0.3,0.4,0.5,0.6},
+yticklabels={0.0,0.05,0.1,0.2,0.3,0.4,0.5,0.6}
+]
+\addplot [semithick, color0, mark=asterisk, mark size=3, mark options={solid}]
+table {%
+0 0.0711447186134756
+0.2 0.0915140101499856
+0.4 0.127002708867192
+0.6 0.13718140295893
+0.8 0.160767805792391
+1 0.1952396190539
+};
+\addlegendentry{CNN}
+\addplot [semithick, color1, mark=*, mark size=3, mark options={solid}]
+table {%
+0 0.109862278148532
+0.2 0.151364630691707
+0.4 0.240521100848913
+0.6 0.341397885978222
+0.8 0.446938222974539
+1 0.555357760697603
+};
+\addlegendentry{BI}
+\end{axis}
+
+\end{tikzpicture}

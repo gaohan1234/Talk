@@ -152,8 +152,8 @@ error^{Traditional}&=Km^{-\frac{\alpha}{d}}\quad\quad\quad\quad error^{NN}=K\fra
 
 \begin{frame}{Neural Network can ease the human burden!}
 \begin{itemize}
-\item \textbf{Enforce PDE constraint in a very straightforward way} (Prof. Karniadakis and Prof. Zabaras since 2018): Encode PDEs with auto-differentiation or convolution filters without traditional numerical concerns, such as stability of scheme and discontinuity.
-\item \textbf{Incorporate data in an unprecedented way for inverse problem} (Prof. Karniadakis and co-workers since 2018): Traditional methods for solving inverse problem can be classified into two categories, gradient-based and non-gradient based method. The former is super code-intrusive and the latter one requires carefully design the framework (e.g., prior in Bayesian methods).  
+\item \textbf{Enforce PDE constraint in a very straightforward way (Prof. Karniadakis and Prof. Zabaras since 2018)} : Encode PDEs with auto-differentiation or convolution filters without traditional numerical concerns, such as stability of scheme and discontinuity.
+\item \textbf{Incorporate data in an unprecedented way for inverse problem (Prof. Karniadakis and co-workers since 2018)} : Traditional methods for solving inverse problem can be classified into two categories, gradient-based and non-gradient based method. The former is super code-intrusive and the latter one requires carefully design the framework (e.g., prior in Bayesian methods).  
 \end{itemize}
 \end{frame}
 
@@ -174,12 +174,15 @@ Two types of training:
 
 %------------------------------------------------
 \begin{frame}
-\frametitle{Several Challenges In Equation-Based Training CNN}
+\frametitle{Main Challenge In Equation-Based Training CNN}
+\begin{figure}
+	\includegraphics[width=1\textwidth]{squaredomain.png}
+	Current works mainly focus on image-like domain!
+\end{figure}
 \begin{itemize}
-\item How to impose boundary condition of PDEs  on irregular domains for CNN (non-image like domain)? \only<2-3>{\textbf{Inspiring solution: wavelet-based mask method (e.g.,distanced function by Prof Hao Sun and Prof Duraisamy)}}  
-\item How to decide or attribute the coefficient of different loss terms (e.g., boundary loss ,equation loss)? \only<2-3>{\textbf{Inspiring solution: learning-rate annealing (Sifan Wang and Prof Perdikaris)}} 
+\item How to impose boundary condition of PDEs  on irregular domains for CNN (non-image like domain)? \only<2-3>{\textbf{Inspiring solution: wavelet-based mask method (e.g.,distanced function)}}  
 \end{itemize}
-\only<3>{\textbf{Inspired by these great work}, I want to make some contribution on \textbf{making CNN be able to `circumvent' these challenges instead of directly solving these challenges}.}
+\only<3>{\textbf{Inspired by these great work}, I want to make some contribution on \textbf{making CNN be able to `circumvent' this challenge instead of directly solving these challenges}.}
 \end{frame}
 
 \section{Methodology}
